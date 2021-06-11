@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
         <item
-            android:color="@android:color/darker_gray"
+            android:color="#A5A5A5"
             android:state_checked="false"
             tools:ignore="MenuTitle" />
         <item
-            android:color="@android:color/white"
+            android:color="#ED5992"
             android:state_checked="true"
             tools:ignore="MenuTitle" />
 

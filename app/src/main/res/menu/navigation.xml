@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/navigation_new"
-        android:icon="@drawable/ic_new"
-        android:title="Albums"/>
+        android:icon="@drawable/ic_today"
+        android:title="New"/>
 
     <item
         android:id="@+id/navigation_popular"
         android:icon="@drawable/ic_popular"
-        android:title="Artists"/>
+        android:title="Popular"/>
 
 </menu>

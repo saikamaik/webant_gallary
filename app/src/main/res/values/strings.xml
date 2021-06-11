@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">webant_gallery</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="oh_shucks">Oh shucks!</string>
+    <string name="popular">Popular</string>
 </resources>
