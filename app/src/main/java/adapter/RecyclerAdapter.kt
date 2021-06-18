@@ -7,7 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.webant_gallery.R
 import com.squareup.picasso.Picasso
-import model.PhotoModel
+import com.example.domain.entity.PhotoModel
 
 class RecyclerAdapter(
     private val photos: List<PhotoModel>,

@@ -1,4 +1,4 @@
-package basemvp
+package presentation.basemvp
 
 import adapter.PaginationScrollListener
 import adapter.RecyclerAdapter
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.webant_gallery.R
-import model.PhotoModel
+import com.example.domain.entity.PhotoModel
 import moxy.MvpAppCompatFragment
-import ui.fragment.ImageDetailFragment
+import presentation.ui.fragment.ImageDetailFragment
 
 
 abstract class BaseFragment<V : BaseView, P: BasePresenter<V>>(var type: String): BaseView,
@@ -44,7 +44,7 @@ abstract class BaseFragment<V : BaseView, P: BasePresenter<V>>(var type: String)
 
         recyclerView.addOnScrollListener(object : PaginationScrollListener(linearLayoutManager) {
             override fun loadMoreItems() {
-                presenter.getPhotos(type)
+                presenter.getPhotos()
             }
         })
     }

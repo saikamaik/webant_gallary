@@ -1,15 +1,11 @@
-package ui.activity
+package com
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.webant_gallery.R
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.reactivex.disposables.CompositeDisposable
-import ui.fragment.NewFragment
-import ui.fragment.PopularFragment
+import presentation.ui.fragment.NewFragment
+import presentation.ui.fragment.PopularFragment
 
 class MainActivity : AppCompatActivity() {
 

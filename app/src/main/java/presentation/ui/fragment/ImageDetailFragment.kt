@@ -1,4 +1,4 @@
-package ui.fragment
+package presentation.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.example.webant_gallery.R
 import com.squareup.picasso.Picasso
-import kotlin.concurrent.fixedRateTimer
 
 class ImageDetailFragment : Fragment() {
 

@@ -1,38 +1,42 @@
-package ui.fragment
+package presentation.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import basemvp.BaseFragment
+import presentation.basemvp.BaseFragment
 import com.example.webant_gallery.R
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import presentation.presenter.PopularPresenter
-import presentation.view.PopularView
+import presentation.presenter.NewPresenter
+import presentation.view.NewView
+import com.App
 
-class PopularFragment : PopularView, BaseFragment<PopularView, PopularPresenter>("popular") {
+
+class NewFragment : BaseFragment<NewView, NewPresenter>("new"), NewView {
 
     @InjectPresenter
-    override lateinit var presenter: PopularPresenter
+    override lateinit var presenter: NewPresenter
+
 
     @ProvidePresenter
+    fun providePresenter(): NewPresenter = App.appComponent.provideNewPresenter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_popular, container, false)
+    ): View {
+        return inflater.inflate(R.layout.fragment_new, container, false)
     }
 
     override fun initViews() {
-        recyclerView = requireView().findViewById(R.id.recyclerViewPopular)
+        recyclerView = requireView().findViewById(R.id.recyclerViewNew)
         swipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
-        placeholder = requireView().findViewById(R.id.popularPlaceholder)
+        placeholder = requireView().findViewById(R.id.newPlaceholder)
 
         swipeRefreshLayout.setOnRefreshListener {
             presenter.onSwipeRefresh()
-            swipeRefreshLayout.isRefreshing = false
         }
 
         swipeRefreshLayout.setColorScheme(
@@ -44,5 +48,4 @@ class PopularFragment : PopularView, BaseFragment<PopularView, PopularPresenter>
 
         progressBar = requireView().findViewById(R.id.progressbar)
     }
-
 }

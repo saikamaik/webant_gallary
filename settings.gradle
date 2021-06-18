@@ -1,2 +1,4 @@
 rootProject.name = "webant_gallery"
 include ':app'
+include ':domain'
+include ':gateway'

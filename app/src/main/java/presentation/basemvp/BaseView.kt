@@ -1,6 +1,6 @@
-package basemvp
+package presentation.basemvp
 
-import model.PhotoModel
+import com.example.domain.entity.PhotoModel
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.OneExecutionStateStrategy

@@ -1,13 +1,11 @@
 package presentation.presenter
 
-import basemvp.BasePresenter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import model.PhotoModel
+import presentation.basemvp.BasePresenter
 import moxy.InjectViewState
 import presentation.view.NewView
-import retrofit.APIService
+import com.example.domain.gateway.PhotoGateway
+import javax.inject.Inject
 
 @InjectViewState
-class NewPresenter : BasePresenter<NewView>("new")
+class NewPresenter @Inject constructor(photoGateway: PhotoGateway) :
+    BasePresenter<NewView>("true", null, photoGateway)

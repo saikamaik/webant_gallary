@@ -1,14 +1,18 @@
-package basemvp
+package presentation.basemvp
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import model.PhotoModel
+import com.example.domain.entity.PhotoModel
 import moxy.MvpPresenter
-import retrofit.APIService
+import com.example.domain.gateway.PhotoGateway
+import kotlin.collections.ArrayList
 
-
-abstract class BasePresenter<V : BaseView>(var type: String) : MvpPresenter<V>() {
+abstract class BasePresenter<V : BaseView>(
+    var new: String?,
+    var popular: String?,
+    private val photoGateway: PhotoGateway
+) : MvpPresenter<V>() {
 
     var isLoading = false
     private var photos: ArrayList<PhotoModel> = arrayListOf()
@@ -20,7 +24,7 @@ abstract class BasePresenter<V : BaseView>(var type: String) : MvpPresenter<V>()
     override fun onFirstViewAttach() {
         viewState.initViews()
         viewState.initRecyclerView(photos)
-        getFirstPhotos(type, false)
+        getFirstPhotos(false)
     }
 
     override fun onDestroy() {
@@ -33,7 +37,7 @@ abstract class BasePresenter<V : BaseView>(var type: String) : MvpPresenter<V>()
             photos.clear()
             page = 1
             viewState.addNewItems()
-            getFirstPhotos(type, isNeedSwipeRefresh = true)
+            getFirstPhotos(isNeedSwipeRefresh = true)
         } else {
             viewState.changeSwipeRefreshState(false)
         }
@@ -43,12 +47,12 @@ abstract class BasePresenter<V : BaseView>(var type: String) : MvpPresenter<V>()
         viewState.navigateToImageDetailFragment(item)
     }
 
-    fun getPhotos(type: String) {
+    fun getPhotos() {
         if (isLastPage || isLoading) {
             return
         }
 
-        APIService.getApiPhotos(type, page)
+        photoGateway.getPhotos(new, popular, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
@@ -75,9 +79,9 @@ abstract class BasePresenter<V : BaseView>(var type: String) : MvpPresenter<V>()
             .let(compositeDisposable::add)
     }
 
-    private fun getFirstPhotos(type: String, isNeedSwipeRefresh: Boolean) {
+    private fun getFirstPhotos(isNeedSwipeRefresh: Boolean) {
 
-        APIService.getApiPhotos(type, page)
+        photoGateway.getPhotos(new, popular, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {

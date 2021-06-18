@@ -1,4 +1,4 @@
-package model
+package com.example.domain.entity
 
 data class APIResponse(
     val totalItems: Int,
