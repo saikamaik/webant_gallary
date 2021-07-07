@@ -1,6 +1,8 @@
 package com.example.gateway.repository
 
 import com.example.domain.entity.APIResponse
+import com.example.domain.entity.ListPhotoModel
+import com.example.domain.entity.PaginationModel
 import com.example.domain.gateway.PhotoGateway
 import com.example.gateway.remoteDataSource.GalleryApi
 import io.reactivex.Single

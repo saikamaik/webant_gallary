@@ -26,8 +26,8 @@ abstract class BaseFragment<V : BaseView, P: BasePresenter<V>>(var type: String)
     private lateinit var adapter: RecyclerAdapter
 
 
-    override fun initRecyclerView(photos: ArrayList<PhotoModel>) {
-        adapter = RecyclerAdapter(photos, object : RecyclerAdapter.MyViewHolder.Callback {
+    override fun initRecyclerView() {
+        adapter = RecyclerAdapter(object : RecyclerAdapter.MyViewHolder.Callback {
             override fun onImageClicked(item: PhotoModel) {
                 presenter.onImageClicked(item)
             }
@@ -49,11 +49,13 @@ abstract class BaseFragment<V : BaseView, P: BasePresenter<V>>(var type: String)
         })
     }
 
-    override fun addExtraItems(position: Int, quantity: Int) {
+    override fun addExtraItems(photos: List<PhotoModel>, position: Int, quantity: Int) {
+        adapter.photos.addAll(photos)
         adapter.notifyItemRangeInserted(position, quantity)
     }
 
-    override fun addNewItems() {
+    override fun addNewItems(photos: ArrayList<PhotoModel>) {
+        adapter.photos = photos
         adapter.notifyDataSetChanged()
     }
 
@@ -80,12 +82,20 @@ abstract class BaseFragment<V : BaseView, P: BasePresenter<V>>(var type: String)
         }
     }
 
+    override fun changeRecyclerViewVisibility(visibility: Boolean) {
+        if (visibility) {
+            recyclerView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.INVISIBLE
+        }
+    }
+
     override fun navigateToImageDetailFragment(photoModel: PhotoModel) {
         val imageDetailFragment = ImageDetailFragment()
         val args = Bundle()
         args.putString("imageName", photoModel.name)
         args.putString("imageDescription", photoModel.description)
-        args.putString("imageLink", photoModel.image.name)
+        args.putString("imageLink", photoModel.image?.name)
         imageDetailFragment.arguments = args
         parentFragmentManager
             .beginTransaction()

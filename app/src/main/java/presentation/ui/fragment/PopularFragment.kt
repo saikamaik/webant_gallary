@@ -1,5 +1,7 @@
 package presentation.ui.fragment
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +34,7 @@ class PopularFragment : PopularView, BaseFragment<PopularView, PopularPresenter>
     override fun initViews() {
         recyclerView = requireView().findViewById(R.id.recyclerViewPopular)
         swipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
-        placeholder = requireView().findViewById(R.id.popularPlaceholder)
+        placeholder = requireView().findViewById(R.id.popularNoInternetPlaceholder)
 
         swipeRefreshLayout.setOnRefreshListener {
             presenter.onSwipeRefresh()
@@ -47,6 +49,21 @@ class PopularFragment : PopularView, BaseFragment<PopularView, PopularPresenter>
         )
 
         progressBar = requireView().findViewById(R.id.progressbar)
+    }
+
+    override fun checkInternetConnection() {
+        if (isNetworkAvailable()){
+            presenter.getPhotos()
+        }
+        else {
+            presenter.checkRealmIsEmpty()
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
     }
 
 }

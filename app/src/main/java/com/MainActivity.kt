@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.webant_gallery.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.realm.Realm
 import presentation.ui.fragment.NewFragment
 import presentation.ui.fragment.PopularFragment
 

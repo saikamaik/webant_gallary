@@ -1,19 +1,25 @@
 package presentation.basemvp
 
+import android.annotation.SuppressLint
+import com.example.domain.entity.PhotoModel
+import com.example.domain.gateway.LocalPhotoGateway
+import com.example.domain.gateway.PhotoGateway
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import com.example.domain.entity.PhotoModel
+import io.realm.Realm
 import moxy.MvpPresenter
-import com.example.domain.gateway.PhotoGateway
-import kotlin.collections.ArrayList
+
 
 abstract class BasePresenter<V : BaseView>(
     var new: String?,
     var popular: String?,
-    private val photoGateway: PhotoGateway
+    private val photoGateway: PhotoGateway,
+    private val localPhotoGateway: LocalPhotoGateway
 ) : MvpPresenter<V>() {
 
+    var realm: Realm = Realm.getDefaultInstance()
     var isLoading = false
     private var photos: ArrayList<PhotoModel> = arrayListOf()
     private var page: Int = 1
@@ -23,8 +29,8 @@ abstract class BasePresenter<V : BaseView>(
 
     override fun onFirstViewAttach() {
         viewState.initViews()
-        viewState.initRecyclerView(photos)
-        getFirstPhotos(false)
+        viewState.initRecyclerView()
+        viewState.checkInternetConnection()
     }
 
     override fun onDestroy() {
@@ -35,9 +41,9 @@ abstract class BasePresenter<V : BaseView>(
     fun onSwipeRefresh() {
         if (!isLoading) {
             photos.clear()
+            viewState.addNewItems(photos)
             page = 1
-            viewState.addNewItems()
-            getFirstPhotos(isNeedSwipeRefresh = true)
+            viewState.checkInternetConnection()
         } else {
             viewState.changeSwipeRefreshState(false)
         }
@@ -53,62 +59,95 @@ abstract class BasePresenter<V : BaseView>(
         }
 
         photoGateway.getPhotos(new, popular, page)
+            .map {
+                it.data
+            }
+            .flatMap {
+                localPhotoGateway.addPhotos(it)
+                    .andThen(Single.just(it))
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
+                viewState.changeRecyclerViewVisibility(true)
+                viewState.changePlaceholderVisibility(true)
                 viewState.changeProgressViewState(true)
                 isLoading = true
-                viewState.changePlaceholderVisibility(true)
             }
             .doOnSuccess {
                 page++
             }
             .doFinally {
+                viewState.changeRecyclerViewVisibility(true)
                 viewState.changeProgressViewState(false)
                 isLoading = false
-            }
-            .subscribe({ response ->
-                photos.addAll(response.data)
-                viewState.addExtraItems(photos.size - response.data.size, response.data.size)
-            }, {
-                it.printStackTrace()
-                photos.clear()
-                viewState.changeProgressViewState(false)
-                viewState.changePlaceholderVisibility(false)
-            })
-            .let(compositeDisposable::add)
-    }
-
-    private fun getFirstPhotos(isNeedSwipeRefresh: Boolean) {
-
-        photoGateway.getPhotos(new, popular, page)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                isLoading = true
-                if (isNeedSwipeRefresh) {
-                    viewState.changeSwipeRefreshState(true)
-                }
-                viewState.changePlaceholderVisibility(true)
-            }
-            .doOnSuccess {
-                page++
-            }
-            .doFinally {
-                isLoading = false
-                if (isNeedSwipeRefresh) {
-                    viewState.changeSwipeRefreshState(false)
-                }
+                viewState.changeSwipeRefreshState(false)
             }
             .subscribe({
-                photos.addAll(it.data as ArrayList<PhotoModel>)
-                viewState.addNewItems()
-            }, {
+                if (page == 1) {
+                photos.addAll(it)
+                viewState.addNewItems(photos)
+            } else {
+                photos.addAll(it)
+                viewState.addExtraItems(it, photos.size - it.size, it.size)
+            }}, {
                 it.printStackTrace()
                 photos.clear()
+                viewState.addNewItems(photos)
+                viewState.changePlaceholderVisibility(false )
                 viewState.changeProgressViewState(false)
-                viewState.changePlaceholderVisibility(false)
             })
             .let(compositeDisposable::add)
     }
-}
+
+    private fun getLocalPhotos() {
+        localPhotoGateway.getLocalPhotos(new, popular, page)
+            .map {
+                it.model
+            }
+            .flatMap {
+                localPhotoGateway.addPhotos(it.items)
+                    .andThen(Single.just(it))
+            }
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe {
+                viewState.changeRecyclerViewVisibility(true)
+                viewState.changePlaceholderVisibility(true)
+                isLoading = true
+                viewState.changeSwipeRefreshState(true)
+                }
+            .doOnSuccess { page++ }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally {
+                viewState.changeRecyclerViewVisibility(true)
+                viewState.changePlaceholderVisibility(true)
+                isLoading = false
+                viewState.changeSwipeRefreshState(false)
+                }
+            .subscribe({
+                if (page == 1) {
+                    photos.addAll(it.items)
+                    viewState.addNewItems(photos)
+                } else {
+                    photos.addAll(it.items)
+                    viewState.addExtraItems(it.items, photos.size - it.items.size, it.items.size)
+                }
+            }, {
+                it.printStackTrace()
+                photos.clear()
+                viewState.addNewItems(photos)
+                viewState.changePlaceholderVisibility(false)
+                viewState.changeProgressViewState(false)
+                }).let(compositeDisposable::add)
+            }
+
+    fun checkRealmIsEmpty() {
+        if (realm.isEmpty){
+            viewState.changePlaceholderVisibility(false)
+        }
+        else {
+            viewState.changeRecyclerViewVisibility(true)
+            getLocalPhotos()
+        }
+    }
+    }

@@ -9,13 +9,13 @@ import moxy.viewstate.strategy.StateStrategyType
 interface BaseView: MvpView{
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun addExtraItems(position: Int, quantity: Int)
+    fun addExtraItems(photos: List<PhotoModel>, position: Int, quantity: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun addNewItems()
+    fun addNewItems(photos: ArrayList<PhotoModel>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun initRecyclerView(photos: ArrayList<PhotoModel>)
+    fun initRecyclerView()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun initViews()
@@ -31,4 +31,10 @@ interface BaseView: MvpView{
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun navigateToImageDetailFragment(photoModel: PhotoModel)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun checkInternetConnection()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun changeRecyclerViewVisibility(visibility : Boolean)
 }

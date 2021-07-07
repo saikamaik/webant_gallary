@@ -6,6 +6,6 @@ data class PhotoModel(
     val description: String?,
     val new: Boolean,
     val popular: Boolean,
-    val image: Image,
-    val user: String
-)
+    val user: String?,
+    val image: Image?
+): Model
