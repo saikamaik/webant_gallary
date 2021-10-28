@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.webant_gallery.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.realm.Realm
+import presentation.ui.fragment.FavoriteFragment
 import presentation.ui.fragment.NewFragment
 import presentation.ui.fragment.PopularFragment
 
@@ -12,12 +13,14 @@ class MainActivity : AppCompatActivity() {
 
     private val newFragment = NewFragment()
     private val popularFragment = PopularFragment()
+    private val favoriteFragment = FavoriteFragment()
 
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_new -> openFragment(newFragment)
                 R.id.navigation_popular -> openFragment(popularFragment)
+                R.id.navigation_favorite -> openFragment(favoriteFragment)
             }
             true
         }
